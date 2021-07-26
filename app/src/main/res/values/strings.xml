@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Android1Calculator</string>
     <string name="C">C</string>
-    <string name="backspace">⌫</string>
-    <string name="percent">%</string>
+    <string name="backspace"></string>
+    <string name="percent"></string>
     <string name="divide">÷</string>
     <string name="_7">7</string>
     <string name="_8">8</string>
@@ -18,6 +18,7 @@
     <string name="plus">+</string>
     <string name="_0">0</string>
     <string name="_00">00</string>
-    <string name="comma">,</string>
+    <string name="comma"></string>
     <string name="equals">=</string>
+    <string name="discriptionTextVew">Работает только с двумя числами, например 111+22</string>
 </resources>
