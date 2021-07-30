@@ -1,17 +1,33 @@
 package com.geek.android1calculator;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    private int themeStatus = 0; // маяк смены темы. 0 - приложение запущено в 1 раз, дневная тема. 1 - дневная. 2 - ночная.
+
+    public void setThemeStatus(int themeStatus) {
+        this.themeStatus = themeStatus;
+    }
+
+    public int getThemeStatus() {
+        return themeStatus;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setTheme(getTheme(getThemeStatus()));
+        if (getThemeStatus() == 0) setThemeStatus(1);
+
         setContentView(R.layout.activity_main);
 
         TextView textViewFormula = findViewById(R.id.textViewFormula);
@@ -32,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         Button buttonMinus = findViewById(R.id.button_minus);
         Button buttonDivide = findViewById(R.id.button_divide);
         Button buttonMultiply = findViewById(R.id.button_x);
+
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +175,62 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Кнопка смены темы
+        Button buttonChangeTheme = findViewById(R.id.button_changeTheme);
+        buttonChangeTheme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(getThemeStatus()==1){
+                    setThemeStatus(2);
+                } else setThemeStatus(1);
 
+                // сохраним настройки/данные
+                SharedPreferences sharedPref = getSharedPreferences("anyName", MODE_PRIVATE);
+                // Настройки сохраняются посредством специального класса editor.
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putInt("key1", getThemeStatus());
+                editor.apply();
+                recreate(); // пересоздадим активити, чтобы тема применилась
+            }
+        });
+    }
+
+    // Сохранение формулы на экране при смене ориентации экрана
+
+    private final static String orientation = "Orientation";
+    ForChangeScreenOrientation changeScreenOrient = new ForChangeScreenOrientation();
+
+    // Сохранение данных
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle instanceState) {
+        super.onSaveInstanceState(instanceState);
+        TextView textViewFormula = findViewById(R.id.textViewFormula);
+        changeScreenOrient.setFormulaText(textViewFormula.getText());
+        instanceState.putSerializable(orientation, changeScreenOrient);
+    }
+
+    // Восстановление данных
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle instanceState) {
+        super.onRestoreInstanceState(instanceState);
+        changeScreenOrient = (ForChangeScreenOrientation) instanceState.getSerializable(orientation);
+        TextView textViewFormula = findViewById(R.id.textViewFormula);
+        textViewFormula.setText(changeScreenOrient.getFormulaText());
+    }
+
+
+    public int getTheme(int x) {  // почему-то int, возвращаемый из метода, подчеркивается красным, если в метод не передать int. Я не понял почему. "int x" здесь просто заглушка
+        SharedPreferences sharedPref = getSharedPreferences("anyName", MODE_PRIVATE); // Работаем через специальный класс сохранения и чтения настроек
+        setThemeStatus(sharedPref.getInt("key1", 22)); // вызвать его метод getString, getInt и т. д. Первый параметр — ключ. Второй — значение по умолчанию
+        switch (getThemeStatus()) {
+            case 0:
+                return R.style.AppThemeLight;
+            case 1:
+                return R.style.AppThemeLight;
+            case 2:
+                return R.style.AppThemeDark;
+        }
+        return 22;
     }
 }
+
