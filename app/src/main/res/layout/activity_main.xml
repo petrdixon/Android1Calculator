@@ -219,7 +219,14 @@
         android:id="@+id/button_changeTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Дневная/ночная тема"
+        android:text="Смена темы через SharedPreferences"
+        android:textSize="10sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_toNextActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Смена темы через Intent и Parcelable"
         android:textSize="10sp" />
 
 

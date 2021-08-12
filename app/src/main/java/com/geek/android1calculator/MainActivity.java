@@ -3,8 +3,10 @@ package com.geek.android1calculator;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private int themeStatus = 0; // маяк смены темы. 0 - приложение запущено в 1 раз, дневная тема. 1 - дневная. 2 - ночная.
+    private SettingsForTransferData settings;
+    private int themeStatusFromSecond;
 
     public void setThemeStatus(int themeStatus) {
         this.themeStatus = themeStatus;
@@ -24,7 +28,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        settings = new SettingsForTransferData();
 
+        // получить данные из SecondActivity
+        try {
+            themeStatusFromSecond = getIntent().getExtras().getInt("anyKey");
+            setThemeStatus(themeStatusFromSecond);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         setTheme(getTheme(getThemeStatus()));
         if (getThemeStatus() == 0) setThemeStatus(1);
 
@@ -48,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         Button buttonMinus = findViewById(R.id.button_minus);
         Button buttonDivide = findViewById(R.id.button_divide);
         Button buttonMultiply = findViewById(R.id.button_x);
-
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,12 +186,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка смены темы
+        // Кнопка смены темы с помощью SharedPreferences
         Button buttonChangeTheme = findViewById(R.id.button_changeTheme);
         buttonChangeTheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(getThemeStatus()==1){
+                if (getThemeStatus() == 1) {
                     setThemeStatus(2);
                 } else setThemeStatus(1);
 
@@ -191,6 +202,20 @@ public class MainActivity extends AppCompatActivity {
                 editor.putInt("key1", getThemeStatus());
                 editor.apply();
                 recreate(); // пересоздадим активити, чтобы тема применилась
+            }
+        });
+
+        // Кнопка перехода во вторую активити для смены темы с помощью Intent и Parcelable
+        // передаю только один параметр, можно было бы обойтись без файла Settings, но в уроке задание его использовать
+        Button buttonTo2Activity = findViewById(R.id.button_toNextActivity);
+        buttonTo2Activity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                settings.setThemeStatus(getThemeStatus());
+                Intent runSecondActivity = new Intent(MainActivity.this, SecondActivity.class);
+                runSecondActivity.putExtra("keyIntent", settings);  // Передача данных через интент
+                startActivity(runSecondActivity);  // Метод стартует активити, указанную в интенте
             }
         });
     }
@@ -232,5 +257,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return 22;
     }
+
 }
 
