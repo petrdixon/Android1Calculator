@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <style name="MyStyle" parent="Theme.Android1Calculator">
+        <item name="android:fontFamily">cursive</item>
+        <item name="android:textStyle">italic</item>
+
+    </style>
+
     <style name="ButtonStyle">
         <item name="android:layout_margin">8dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="AppThemeLight" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">#e91e63</item>
+        <item name="colorPrimaryDark">#b0003a</item>
+        <item name="colorAccent">#ff6090</item>
+    </style>
+
+    <style
+        name="AppThemeDark" parent="Theme.MaterialComponents">
     </style>
 </resources>
